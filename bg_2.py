@@ -13,12 +13,13 @@ def get_url(cate):
         'cache-control': "no-cache",
         'postman-token': "fab4fce6-bc85-d134-e42e-a73628962c1f"
     }
-    imgs = requests.get('https://pic.sogou.com/pics?query=' + cate + '&w=05009900&sut=639&sst0=1550220733590',
-                        headers=headers)
+
+    imgs = requests.get(
+        'https://pic.sogou.com/pics?query=' + cate + '&mode=0&start=48&reqType=ajax&reqFrom=result&tn=0',
+        headers=headers)
     html = BeautifulSoup(imgs.text)
-    texts = html.find_all('script', type='text/javascript')
-    text = texts[0]
-    urls = re.findall("ori_pic_url(.*?),", text.get_text(), re.S)
+
+    urls = re.findall("thumbUrl(.*?),", str(html), re.S)
     pic_urls = []
     for url in urls:
         print(url[3:-1])
@@ -37,12 +38,12 @@ def download_pic(pic_urls, cate):
         try:
             request.urlretrieve(img_url, file_path + str(m) + '.jpg')
         except Exception as e:
-            print(str(m)+".jpg下载失败")
+            print(str(m) + ".jpg下载失败")
         m = m + 1
     print('Download complete!')
 
 
 if __name__ == "__main__":
-    cate = '姚明'
+    cate = '美女'
     urls = get_url(cate)
     download_pic(urls, cate)
